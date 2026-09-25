@@ -1,10 +1,16 @@
 pipeline {
     agent any
 
+    environment {
+        FLUTTER_HOME = '/home/alnajoyk1/flutter'
+        PATH = "${FLUTTER_HOME}/bin:${PATH}"
+    }
+
     stages {
 
         stage('Check Flutter') {
             steps {
+                sh 'which flutter'
                 sh 'flutter --version'
             }
         }
