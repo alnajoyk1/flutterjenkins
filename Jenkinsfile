@@ -1,47 +1,37 @@
 pipeline {
     agent any
 
-    environment {
-        FLUTTER_HOME = 'C:\\src\\flutter'
-        PATH = "${FLUTTER_HOME}\\bin;${PATH}"
-    }
-
     stages {
 
-        stage('Check Flutter') {
+        stage('Install Dependencies') {
             steps {
-                bat 'where flutter'
-                bat 'flutter --version'
+                bat 'python --version'
+                bat 'python -m venv .venv'
+                bat '.venv\\Scripts\\python.exe -m pip install --upgrade pip'
+                bat '.venv\\Scripts\\python.exe -m pip install -r requirements.txt'
             }
         }
 
-        stage('Check Project Files') {
+        stage('Test') {
             steps {
-                bat 'dir'
-                bat 'dir /s /b pubspec.yaml'
+                bat '.venv\\Scripts\\python.exe -m pytest -v'
             }
         }
 
-        stage('Get Dependencies') {
+        stage('Build') {
             steps {
-                bat 'flutter pub get'
-            }
-        }
-
-        stage('Build APK') {
-            steps {
-                bat 'flutter build apk --release'
+                bat '.venv\\Scripts\\python.exe -m py_compile app.py test_app.py'
             }
         }
     }
 
     post {
         success {
-            echo 'Flutter APK build completed successfully!'
+            echo 'Build and tests completed successfully!'
         }
 
         failure {
-            echo 'Flutter build failed. Check the console output.'
+            echo 'Pipeline failed. Check the console output.'
         }
     }
 }
