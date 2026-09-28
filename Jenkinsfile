@@ -15,6 +15,13 @@ pipeline {
             }
         }
 
+        stage('Check Project Files') {
+            steps {
+                bat 'dir'
+                bat 'dir /s /b pubspec.yaml'
+            }
+        }
+
         stage('Get Dependencies') {
             steps {
                 bat 'flutter pub get'
